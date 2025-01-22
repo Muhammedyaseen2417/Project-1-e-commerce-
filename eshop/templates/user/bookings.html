@@ -45,7 +45,25 @@
                     <div class="card-body">
                         <h5 class="card-title">{{i.product.name}}</h5>
                         <p class="card-text text-muted">Price: <strong>{{i.price}}</strong></p>
-                        <a href="#" class="btn btn-primary">View Details</a>
+                        <a href="/details/{{i.product.id}}" class="btn btn-primary">View Details</a>
+                        <div class="modal fade" id="productModal{{i.product.id}}" tabindex="-1" aria-labelledby="productModalLabel{{i.product.id}}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="productModalLabel{{i.product.id}}">{{i.product.name}} Details</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <img src="{{i.product.img.url}}" class="img-fluid mb-3" alt="{{i.product.name}}">
+                                        <p><strong>Price:</strong> {{i.price}}</p>
+                                        <p><strong>Description:</strong> {{i.product.description}}</p>
+                                        <!-- Add other product details here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+
                     </div>
                 </div>
             </div>

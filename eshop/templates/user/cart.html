@@ -68,7 +68,12 @@
                 <div class="product-card">
                     <img src="{{i.product.img.url}}" alt="{{i.product.name}}">
                     <h2>{{i.product.name}}</h2>
-                    <h2>${{i.product.price}}</h2>
+                    <h2 id="price-{{i.pk}}">${{i.product.price}}</h2>
+                    <div class="input-group mb-3">
+                        <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity({{i.pk}}, {{i.product.price}})">-</button>
+                        <input type="number" class="form-control text-center" id="quantity-{{i.pk}}" value="1" min="1" onchange="updatePrice({{i.pk}}, {{i.product.price}})">
+                        <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity({{i.pk}}, {{i.product.price}})">+</button>
+                    </div>
                     <a href="delete_cart/{{i.pk}}" class="btn btn-dark">Remove</a>
                     <a href="user_buy/{{i.pk}}" class="btn btn-warning">Buy</a>
                 </div>
@@ -76,5 +81,28 @@
             {% endfor %}
         </div>
     </div>
+
+    <script>
+        function updatePrice(productId, productPrice) {
+            const quantity = document.getElementById(`quantity-${productId}`).value;
+            const priceElement = document.getElementById(`price-${productId}`);
+            priceElement.textContent = `$${(quantity * productPrice).toFixed(2)}`;
+        }
+
+        function increaseQuantity(productId, productPrice) {
+            const quantityInput = document.getElementById(`quantity-${productId}`);
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+            updatePrice(productId, productPrice);
+        }
+
+        function decreaseQuantity(productId, productPrice) {
+            const quantityInput = document.getElementById(`quantity-${productId}`);
+            if (quantityInput.value > 1) {
+                quantityInput.value = parseInt(quantityInput.value) - 1;
+                updatePrice(productId, productPrice);
+            }
+        }
+    </script>
 </body>
 </html>
+
