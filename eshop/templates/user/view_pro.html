@@ -43,6 +43,34 @@
             font-weight: 600;
         }
     </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const basePrice = {{data.ofr_price}}; // Replace this with the dynamic base price
+            const priceMap = {
+                "4GB": 0,
+                "8GB": 2000,
+                "16GB": 5000,
+                "128GB": 0,
+                "256GB": 3000,
+                "512GB": 7000
+            };
+
+            const ramSelect = document.getElementById("ram-select");
+            const storageSelect = document.getElementById("storage-select");
+            const priceDisplay = document.querySelector("h3");
+
+            function updatePrice() {
+                const ramPrice = priceMap[ramSelect.value] || 0;
+                const storagePrice = priceMap[storageSelect.value] || 0;
+                const totalPrice = basePrice + ramPrice + storagePrice;
+
+                priceDisplay.textContent = `₹${totalPrice}`;
+            }
+
+            ramSelect.addEventListener("change", updatePrice);
+            storageSelect.addEventListener("change", updatePrice);
+        });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -75,10 +103,8 @@
                         <option value="512GB">512GB</option>
                     </select>
                 </div>
-                
             </div>
         </div>
     </div>
 </body>
 </html>
-
