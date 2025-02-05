@@ -72,6 +72,32 @@
                     <label for="ofrprice" class="form-label">Offer Price</label>
                     <input type="number" class="form-control" id="ofrprice" placeholder="Enter Offer Price" name="ofr_price" value="{{product.ofr_price}}">
                 </div>
+                
+                <!-- RAM Selection -->
+                <div class="mb-3">
+                    <label for="ram" class="form-label">RAM</label>
+                    <select class="form-control" name="ram" id="ram">
+                        <option value="4GB" {% if product.ram == "4GB" %}selected{% endif %}>4GB</option>
+                        <option value="6GB" {% if product.ram == "6GB" %}selected{% endif %}>6GB</option>
+                        <option value="8GB" {% if product.ram == "8GB" %}selected{% endif %}>8GB</option>
+                        <option value="12GB" {% if product.ram == "12GB" %}selected{% endif %}>12GB</option>
+                        <option value="16GB" {% if product.ram == "16GB" %}selected{% endif %}>16GB</option>
+                        <option value="32GB" {% if product.ram == "32GB" %}selected{% endif %}>32GB</option>
+                    </select>
+                </div>
+                
+                <!-- Storage Selection -->
+                <div class="mb-3">
+                    <label for="storage" class="form-label">Storage</label>
+                    <select class="form-control" name="storage" id="storage">
+                        <option value="64GB" {% if product.storage == "64GB" %}selected{% endif %}>64GB</option>
+                        <option value="128GB" {% if product.storage == "128GB" %}selected{% endif %}>128GB</option>
+                        <option value="256GB" {% if product.storage == "256GB" %}selected{% endif %}>256GB</option>
+                        <option value="512GB" {% if product.storage == "512GB" %}selected{% endif %}>512GB</option>
+                        <option value="1TB" {% if product.storage == "1TB" %}selected{% endif %}>1TB</option>
+                    </select>
+                </div>
+
                 <div class="mb-3 text-center">
                     <img src="{{product.img.url}}" alt="Product Image" style="width: 200px; height: 200px; object-fit: contain;">
                 </div>
@@ -91,3 +117,4 @@
     </div>
 </body>
 </html>
+

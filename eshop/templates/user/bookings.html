@@ -32,6 +32,13 @@
         .btn-primary:hover {
             background-color: #0056b3;
         }
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body>
@@ -45,7 +52,10 @@
                     <div class="card-body">
                         <h5 class="card-title">{{i.product.name}}</h5>
                         <p class="card-text text-muted">Price: <strong>{{i.price}}</strong></p>
-                        <a href="/details/{{i.product.id}}" class="btn btn-primary">View Details</a>
+
+                        <a href="{% url 'remove_booking' i.id %}" class="btn btn-danger mt-3" onclick="return confirm('Are you sure you want to remove this booking?')">Remove</a>
+
+                        <!-- Modal for viewing details (optional) -->
                         <div class="modal fade" id="productModal{{i.product.id}}" tabindex="-1" aria-labelledby="productModalLabel{{i.product.id}}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -62,8 +72,6 @@
                                 </div>
                             </div>
                         </div>
-                        
-
                     </div>
                 </div>
             </div>
@@ -72,3 +80,4 @@
     </div>
 </body>
 </html>
+

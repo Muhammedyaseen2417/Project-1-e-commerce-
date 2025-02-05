@@ -17,7 +17,7 @@ urlpatterns=[
 
     # --------------user---------------------
 
-
+      path('view_cart/', views.view_cart, name='view_cart'),
     path('register',views.register),
     path('user_home',views.user_home),
     path('view_pro/<pid>',views.view_pro),
@@ -27,6 +27,11 @@ urlpatterns=[
     path('user_buy/<cid>',views.user_buy),
     path('user_buy1/<pid>',views.user_buy1),
     path('user_booking',views.user_booking),
-
-
+    path('remove_booking/<int:booking_id>/', views.remove_booking, name='remove_booking'),
+    path('user_booking/', views.user_booking, name='user_booking'),
+    # The URL pattern for removing a booking
+    path('remove_booking/<int:booking_id>/', views.remove_booking, name='remove_booking'),
 ]
+
+
+
