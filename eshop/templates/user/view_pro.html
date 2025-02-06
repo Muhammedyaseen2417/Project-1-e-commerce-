@@ -8,39 +8,88 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         body {
-            background-color: #f8f9fa;
+            background-color: #f7f7f7;
+            font-family: 'Arial', sans-serif;
         }
         .container {
-            margin-top: 5%;
+            margin-top: 40px;
         }
-        s {
-            color: #585656;
+        .product-image {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        h2, h3 {
+        .product-details {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .product-details h2 {
+            font-size: 2rem;
+            color: #333;
             font-weight: 700;
         }
-        .col-lg-7 {
-            background-color: #f1f1f1d7;
-            padding: 20px;
-            border-radius: 8px;
-        }
-        .btn {
-            background-color: orangered;
-            border-radius: 3px;
-            color: white;
+        .product-details h3 {
+            font-size: 1.8rem;
+            color: #e74c3c;
             font-weight: 700;
         }
-        .bt {
-            margin-top: 20px;
+        .old-price {
+            text-decoration: line-through;
+            color: #bbb;
         }
-        .btn:hover {
-            color: orangered;
+        .product-description {
+            color: #777;
+            font-size: 1rem;
+            margin-top: 15px;
         }
         .option-select {
-            margin-top: 20px;
+            margin-top: 25px;
         }
         label {
             font-weight: 600;
+        }
+        .btn-custom {
+            background-color: #e74c3c;
+            color: white;
+            font-weight: 700;
+            border-radius: 8px;
+            width: 100%;
+            padding: 15px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-custom:hover {
+            background-color: #c0392b;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #3498db;
+            color: white;
+            font-weight: 700;
+            border-radius: 8px;
+            width: 100%;
+            padding: 15px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #2980b9;
+        }
+        .col-lg-5, .col-lg-7 {
+            padding: 20px;
+        }
+        .back-to-home {
+            text-decoration: none;
+            color: white;
+            background-color: #3498db;
+            padding: 10px 20px;
+            font-weight: 700;
+            border-radius: 5px;
+            margin-top: 30px;
+            display: inline-block;
+        }
+        .back-to-home:hover {
+            background-color: #2980b9;
         }
     </style>
     <script>
@@ -73,20 +122,22 @@
     </script>
 </head>
 <body>
+
     <div class="container">
         <div class="row">
+            <!-- Product Image Column -->
             <div class="col-lg-5">
-                <img src="{{data.img.url}}" alt="Product Image" style="width: 100%; height: 500px; object-fit: contain; display: block;">
-                <div class="bt">
-                    <a class="btn" href="../add_to_cart/{{data.pk}}">ADD TO CART</a>
-                    <a class="btn" href="../user_buy1/{{data.pk}}">BUY NOW</a>
-                </div>
+                <img src="{{data.img.url}}" alt="Product Image" class="product-image">
             </div>
-            <div class="col-lg-7">
+
+            <!-- Product Details Column -->
+            <div class="col-lg-7 product-details">
                 <h2>{{data.name}}</h2>
-                <s><p>₹{{data.price}}</p></s>
+                <p class="old-price">₹{{data.price}}</p>
                 <h3>₹{{data.ofr_price}}</h3>
-                <p>{{data.dis}}</p>
+                <p class="product-description">{{data.dis}}</p>
+
+                <!-- Optional Selection for RAM and Storage -->
                 <div class="option-select">
                     <label for="ram-select">Select RAM:</label>
                     <select id="ram-select" class="form-select">
@@ -95,6 +146,7 @@
                         <option value="16GB">16GB</option>
                     </select>
                 </div>
+
                 <div class="option-select">
                     <label for="storage-select">Select Storage:</label>
                     <select id="storage-select" class="form-select">
@@ -103,8 +155,21 @@
                         <option value="512GB">512GB</option>
                     </select>
                 </div>
+
+                <!-- Buttons Section -->
+                <div class="bt mt-4">
+                    <a href="../add_to_cart/{{data.pk}}" class="btn-custom">ADD TO CART</a>
+                    <a href="../user_buy1/{{data.pk}}" class="btn-secondary mt-3">BUY NOW</a>
+                </div>
             </div>
         </div>
+
+        <!-- Back to Home Button -->
+        <div class="text-center mt-4">
+            <a href="../user_home" class="back-to-home">Back to Home</a>
+        </div>
     </div>
+
 </body>
 </html>
+
