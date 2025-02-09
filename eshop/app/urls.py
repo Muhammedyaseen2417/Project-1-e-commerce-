@@ -7,7 +7,7 @@ urlpatterns=[
 
     # ---------------shop--------------------
 
-
+    
     path('shp_home',views.shp_home),
     path('add_prod',views.add_prod),
     path('edit_prod/<pid>',views.edit_prod),
@@ -16,8 +16,10 @@ urlpatterns=[
 
 
     # --------------user---------------------
-
-      path('view_cart/', views.view_cart, name='view_cart'),
+     
+    
+   
+    path('view_cart/', views.view_cart, name='view_cart'),
     path('register',views.register),
     path('user_home',views.user_home, name='user_home'),
     path('view_pro/<pid>',views.view_pro),
