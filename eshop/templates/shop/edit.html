@@ -98,6 +98,12 @@
                     </select>
                 </div>
 
+                <!-- Stock Quantity -->
+                <div class="mb-3">
+                    <label for="stock_quantity" class="form-label">Stock Quantity</label>
+                    <input type="number" class="form-control" id="stock_quantity" name="stock_quantity" value="{{product.quantity_in_stock}}" min="0">
+                </div>
+
                 <div class="mb-3 text-center">
                     <img src="{{product.img.url}}" alt="Product Image" style="width: 200px; height: 200px; object-fit: contain;">
                 </div>
@@ -117,4 +123,6 @@
     </div>
 </body>
 </html>
+
+
 

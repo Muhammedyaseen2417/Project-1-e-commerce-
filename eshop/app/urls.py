@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 urlpatterns=[
-    path('',views.shp_login),
+    path('shp_login',views.shp_login , name='shp_login'),
     path('shp_logout',views.shp_logout),
 
 
@@ -39,7 +39,9 @@ urlpatterns=[
     path('remove_booking/<int:booking_id>/', views.remove_booking, name='remove_booking'),
     path('order/', views.order_create, name='order_create'),
     path('order/success/', views.order_success, name='order_success'),
+    path('', views.homepage, name='homepage'),
 ]
+
 
 
 

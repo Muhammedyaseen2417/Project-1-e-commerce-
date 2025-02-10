@@ -93,6 +93,9 @@
                         <p class="card-text"><strong>RAM:</strong> {{product.ram}}</p>
                         <p class="card-text"><strong>Storage:</strong> {{product.storage}}</p>
 
+                        <!-- Display Stock Quantity -->
+                        <p class="card-text"><strong>Stock Quantity:</strong> {{product.quantity_in_stock}}</p>
+
                         <div class="d-flex justify-content-between">
                             <a href="edit_prod/{{product.pk}}" class="btn btn-primary">Edit</a>
                             <a href="delete_prod/{{product.pk}}" class="btn btn-danger">Delete</a>
@@ -105,4 +108,5 @@
     </div>
 </body>
 </html>
+
 

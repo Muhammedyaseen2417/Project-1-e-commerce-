@@ -14,7 +14,8 @@ class Product(models.Model):
     dis = models.TextField()  # Product description
     ram = models.CharField(max_length=50, blank=True, null=True)  # RAM size (e.g., "8GB", "16GB")
     storage = models.CharField(max_length=50, blank=True, null=True)  # Storage size (e.g., "128GB", "256GB")
-
+    quantity_in_stock = models.PositiveIntegerField(default=0)  # Stock quantity
+    
     def __str__(self):
         return self.name
 

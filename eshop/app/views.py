@@ -5,6 +5,7 @@ import os
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
+from django.http import HttpResponse
 
 
 # Create your views here.
@@ -246,7 +247,7 @@ def add_to_cart(req, pid):
     data = Cart.objects.create(user=user, product=prod)
     data.save()
     return redirect('view_cart')  # Ensure 'view_cart' is the correct URL pattern name
-
+from django.http import HttpResponse
 
 from django.shortcuts import render, redirect
 from .form import OrderForm
@@ -265,3 +266,29 @@ def order_create(request):
 
 def order_success(request):
     return render(request, 'user/order_success.html')
+
+
+# views.py
+from django.shortcuts import render
+
+def homepage(request):
+    return render(request, 'user/home1.html')
+
+def product_detail(request, product_id):
+    product = Product.objects.get(id=product_id)  # Get product by ID
+    return render(request, 'add_prod.html', {'product': product})
+
+def update_stock(request, product_id):
+    if request.method == 'POST':
+        product = get_object_or_404(Product, id=product_id)
+        new_quantity = request.POST.get('quantity')
+        
+        if new_quantity is not None:
+            product.quantity_in_stock = int(new_quantity)
+            product.save()
+            return redirect('product_detail', product_id=product.id)
+
+    return HttpResponse("Invalid request", status=400)
+
+
+
