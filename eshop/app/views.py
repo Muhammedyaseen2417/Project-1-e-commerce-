@@ -59,8 +59,9 @@ def add_prod(req):
             prd_dis = req.POST['prd_dis']
             prd_ram = req.POST['ram']  # Added RAM field
             prd_storage = req.POST['storage']  # Added Storage field
+            prd_stock = req.POST['stock_quantity']  # Added Stock Quantity field
 
-            # Create the new product including RAM and Storage
+            # Create the new product including RAM, Storage, and Stock Quantity
             data = Product.objects.create(
                 pro_id=prd_id,
                 name=prd_name,
@@ -69,7 +70,8 @@ def add_prod(req):
                 img=img,
                 dis=prd_dis,
                 ram=prd_ram,  # Set the RAM value
-                storage=prd_storage  # Set the Storage value
+                storage=prd_storage,  # Set the Storage value
+                quantity_in_stock=prd_stock  # Set the Stock Quantity
             )
             data.save()
             return redirect(add_prod)
@@ -77,6 +79,7 @@ def add_prod(req):
             return render(req, 'shop/add_prod.html')
     else:
         return redirect(shp_login)
+
 
     
 def edit_prod(req, pid):
@@ -89,10 +92,11 @@ def edit_prod(req, pid):
             prd_dis = req.POST['prd_dis']
             prd_ram = req.POST['ram']  # Added RAM field
             prd_storage = req.POST['storage']  # Added Storage field
+            prd_stock = req.POST['stock_quantity']  # Added Stock Quantity field
             img = req.FILES.get('img')
             
             if img:
-                # Update the product with new RAM, Storage, and Image
+                # Update the product with new RAM, Storage, Stock Quantity, and Image
                 Product.objects.filter(pk=pid).update(
                     pro_id=prd_id,
                     name=prd_name,
@@ -100,7 +104,8 @@ def edit_prod(req, pid):
                     ofr_price=ofr_price,
                     dis=prd_dis,
                     ram=prd_ram,  # Update the RAM value
-                    storage=prd_storage  # Update the Storage value
+                    storage=prd_storage,  # Update the Storage value
+                    stock_quantity=prd_stock  # Update the Stock Quantity
                 )
                 data = Product.objects.get(pk=pid)
                 data.img = img
@@ -114,7 +119,8 @@ def edit_prod(req, pid):
                     ofr_price=ofr_price,
                     dis=prd_dis,
                     ram=prd_ram,  # Update the RAM value
-                    storage=prd_storage  # Update the Storage value
+                    storage=prd_storage,  # Update the Storage value
+                    quantity_in_stock=prd_stock  # Update the Stock Quantity
                 )
             return redirect(shp_home)
         else:
@@ -122,6 +128,7 @@ def edit_prod(req, pid):
             return render(req, 'shop/edit.html', {'product': data})
     else:
         return redirect(shp_login)
+
 
 def delete_prod(req,pid):
     data=Product.objects.get(pk=pid)

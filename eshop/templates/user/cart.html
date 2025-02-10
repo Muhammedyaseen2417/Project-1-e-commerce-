@@ -107,7 +107,7 @@
 <body>
     <nav class="navbar navbar-expand-sm navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">I Store</a>
+            <a class="navbar-brand" href="#">Faz Mobiles</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -128,48 +128,66 @@
     </nav>
 
     <div class="container">
-        <div class="row">
-            {% for i in cart_dtls %}
-            <div class="col-lg-4 col-md-6">
-                <div class="product-card">
-                    <img src="{{i.product.img.url}}" alt="{{i.product.name}}">
-                    <h2>{{i.product.name}}</h2>
-                    <h3 id="price-{{i.pk}}">₹{{i.product.price}}</h3>
-                    <div class="input-group mb-3">
-                        <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity({{i.pk}}, {{i.product.price}})">-</button>
-                        <input type="number" class="form-control text-center" id="quantity-{{i.pk}}" value="1" min="1" onchange="updatePrice({{i.pk}}, {{i.product.price}})">
-                        <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity({{i.pk}}, {{i.product.price}})">+</button>
+        {% if cart_dtls %}
+            <div class="row">
+                {% for i in cart_dtls %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="product-card">
+                        <img src="{{i.product.img.url}}" alt="{{i.product.name}}">
+                        <h2>{{i.product.name}}</h2>
+                        <h3 id="price-{{i.pk}}">₹{{i.product.ofr_price}}</h3>
+                        <div class="input-group mb-3">
+                            <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity({{i.pk}}, {{i.product.price}})">-</button>
+                            <input type="number" class="form-control text-center" id="quantity-{{i.pk}}" value="1" min="1" onchange="updatePrice({{i.pk}}, {{i.product.price}})">
+                            <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity({{i.pk}}, {{i.product.price}})">+</button>
+                        </div>
+                        <a href="delete_cart/{{i.pk}}" class="btn btn-dark">Remove</a>
+                        <a href="user_buy/{{i.pk}}" class="btn btn-warning">Buy</a>
                     </div>
-                    <a href="delete_cart/{{i.pk}}" class="btn btn-dark">Remove</a>
-                    <a href="user_buy/{{i.pk}}" class="btn btn-warning">Buy</a>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                Your cart is empty. Start adding some products!
+            </div>
+        {% endif %}
     </div>
 
     <script>
         function updatePrice(productId, productPrice) {
-            const quantity = document.getElementById(`quantity-${productId}`).value;
+            const quantityInput = document.getElementById(`quantity-${productId}`);
+            const quantity = Math.min(quantityInput.value, 5); // Limit quantity to 5
+            quantityInput.value = quantity; // Update the input value to the limited quantity
             const priceElement = document.getElementById(`price-${productId}`);
             priceElement.textContent = `₹${(quantity * productPrice).toFixed(2)}`;
         }
-
+    
         function increaseQuantity(productId, productPrice) {
             const quantityInput = document.getElementById(`quantity-${productId}`);
-            quantityInput.value = parseInt(quantityInput.value) + 1;
-            updatePrice(productId, productPrice);
+            let currentQuantity = parseInt(quantityInput.value);
+            
+            if (currentQuantity < 5) {
+                quantityInput.value = currentQuantity + 1;
+                updatePrice(productId, productPrice);
+            } else {
+                alert("The maximum purchase limit is 5.");
+            }
         }
-
+    
         function decreaseQuantity(productId, productPrice) {
             const quantityInput = document.getElementById(`quantity-${productId}`);
-            if (quantityInput.value > 1) {
-                quantityInput.value = parseInt(quantityInput.value) - 1;
+            let currentQuantity = parseInt(quantityInput.value);
+            
+            if (currentQuantity > 1) {
+                quantityInput.value = currentQuantity - 1;
                 updatePrice(productId, productPrice);
             }
         }
     </script>
+    
 </body>
 </html>
+
 
 

@@ -26,6 +26,58 @@
             color: white;
             padding: 50px 0;
         }
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        footer a {
+            color: #ff6f61;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.5rem;
+            }
+
+            .navbar-nav .nav-link {
+                font-size: 1rem;
+            }
+        }
+        .marquee-container {
+            background-color: #343a40;
+            color: white;
+            padding: 10px 0;
+            font-size: 1.1rem;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .marquee {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 15s linear infinite;
+        }
+
+        @keyframes marquee {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(-100%);
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -34,7 +86,7 @@
 
     <!-- Hero Section -->
     <div class="container-fluid hero-section text-center">
-        <h1>Welcome to I Store</h1>
+        <h1>Welcome to Faz Mobiles</h1>
         <p>Find the best smartphones at unbeatable prices!</p>
         <a href="shp_login" class="btn btn-light">Shop Now</a>
     </div>
@@ -111,17 +163,25 @@
             </div>
         </div>
     </div>
-
-    <!-- Contact Section -->
-    <div id="contact" class="container my-5 text-center">
-        <h2>Contact Us</h2>
-        <p>Email: istore2417@gmail.com | Phone: +91 9633683784</p>
+    <!-- Marquee for running text -->
+    <div class="marquee-container">
+        <div class="marquee">Welcome to Faz Mobiles! Grab your favorite products at amazing discounts. Don't miss out on limited-time offers!</div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3">
-        <p>&copy; 2025 I Store. All Rights Reserved.</p>
+     <!-- Footer Section -->
+     <footer>
+        <p>&copy; 2025 I Store. All rights reserved.</p>
+        <p>Contact us: <a href="mailto:support@istore.com">support@FazMobiles.com</a></p>
+        <p>
+            <a href="#">Privacy Policy</a> | 
+            <a href="#">Terms of Service</a> | 
+            <a href="#">FAQ</a>
+        </p>
+        <p>
+            Find us on the map: <a href="https://www.google.com/maps/@9.9940601,76.2648125,11z?entry=ttu&g_ep=EgoyMDI1MDIwNS4xIKXMDSoASAFQAw%3D%3D" target="_blank">View Map</a>
+        </p>
     </footer>
+    
 </body>
 </html>
 
