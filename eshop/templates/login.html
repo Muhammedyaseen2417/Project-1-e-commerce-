@@ -90,6 +90,9 @@
             <input type="submit" value="Submit">
         </form>
         <p>Don't have an account? <a href="register">Register here</a></p>
+
+
+        <a href="{% url 'password_reset' %}" class="btn-link">Forgot Password?</a>
         {% if messages %}
         {% for message in messages %}
         <div class="alert alert-warning alert-dismissible fade show mt-2">

@@ -140,6 +140,56 @@ def delete_prod(req,pid):
 def bookings(req):
     buy=Buy.objects.all()[::-1]
     return render(req,'shop/bookings.html',{'buy':buy})
+
+
+
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.conf import settings
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.utils.crypto import get_random_string
+
+# Mock function to simulate email sending for verification
+from django.urls import reverse_lazy
+from django.contrib.auth.views import (
+    PasswordResetView, 
+    PasswordResetDoneView, 
+    PasswordResetConfirmView, 
+    PasswordResetCompleteView
+)
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'password_reset.html'
+    email_template_name = 'password_reset_email.html'
+    subject_template_name = 'password_reset_subject.txt'
+    success_url = reverse_lazy('password_reset_done')
+
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = 'password_reset_done.html'
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'password_reset_confirm.html'
+    success_url = reverse_lazy('password_reset_complete')
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = 'password_reset_complete.html'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #______________________________________________________________________USER___________________________________________________________________________________________________________________________________________________________________
 def register(req):
     if req.method=='POST':
@@ -206,14 +256,47 @@ def delete_cart(req,id):
     cart.delete()
     return redirect(view_cart)
 
-def user_buy(req,cid):
-    user=User.objects.get(username=req.session['user'])
-    cart=Cart.objects.get(pk=cid)
-    product=cart.product
-    price=cart.product.ofr_price
-    buy=Buy.objects.create(user=user,product=product,price=price)
-    buy.save()
-    return redirect(order_create)
+from django.shortcuts import redirect
+from .models import User, Cart, Buy
+from django.shortcuts import redirect
+from .models import User, Cart, Buy
+
+def user_buy(req, cid):
+    # Get the user from the session
+    user = User.objects.get(username=req.session['user'])
+    
+    # Get the cart item by its id (cid)
+    cart = Cart.objects.get(pk=cid)
+    
+    # Get the product associated with this cart item
+    product = cart.product
+    
+    # Get the price of the product
+    price = cart.product.ofr_price
+    
+    # Get the quantity selected by the user in the cart
+    quantity_selected = cart.quantity  # Assuming `Cart` model has a `quantity` field
+    
+    # Check if the selected quantity is available in stock
+    if product.quantity_in_stock >= quantity_selected:
+        # Decrease the stock by the quantity the user selected
+        product.quantity_in_stock -= quantity_selected
+        product.save()
+        
+        # Create a Buy record for the transaction
+        buy = Buy.objects.create(user=user, product=product, price=price, quantity=quantity_selected)
+        buy.save()
+        
+        # Optionally, delete the cart item after purchase
+        cart.delete()
+
+        # Redirect to the order creation page (adjust to your actual order creation view)
+        return redirect('order_create')
+    else:
+        # If not enough stock is available, inform the user
+        return redirect('cart_page')  # Redirect to cart view with an error message
+
+
 def user_buy1(req,pid):
      user=User.objects.get(username=req.session['user'])
      product=Product.objects.get(pk=pid)
@@ -296,6 +379,13 @@ def update_stock(request, product_id):
             return redirect('product_detail', product_id=product.id)
 
     return HttpResponse("Invalid request", status=400)
+
+
+
+
+
+
+
 
 
 
