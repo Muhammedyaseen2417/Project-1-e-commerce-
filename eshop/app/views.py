@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.http import HttpResponse
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -137,9 +138,17 @@ def delete_prod(req,pid):
     os.remove('media/'+og_path)
     data.delete()
     return redirect(shp_home)
-def bookings(req):
-    buy=Buy.objects.all()[::-1]
-    return render(req,'shop/bookings.html',{'buy':buy})
+def bookings(request):
+    # Get all Buy objects with related product and user data
+    buy = Buy.objects.select_related('product', 'user').all().order_by('-date')
+    
+    # Get all Order objects related to the Buy objects (assuming there's a way to link Buy to Order)
+    orders = Order.objects.all()
+
+    # Create combined data
+    combined_data = zip(buy, orders)
+
+    return render(request, 'shop/bookings.html', {'combined_data': combined_data})
 
 
 
@@ -261,40 +270,14 @@ from .models import User, Cart, Buy
 from django.shortcuts import redirect
 from .models import User, Cart, Buy
 
-def user_buy(req, cid):
-    # Get the user from the session
-    user = User.objects.get(username=req.session['user'])
-    
-    # Get the cart item by its id (cid)
-    cart = Cart.objects.get(pk=cid)
-    
-    # Get the product associated with this cart item
-    product = cart.product
-    
-    # Get the price of the product
-    price = cart.product.ofr_price
-    
-    # Get the quantity selected by the user in the cart
-    quantity_selected = cart.quantity  # Assuming `Cart` model has a `quantity` field
-    
-    # Check if the selected quantity is available in stock
-    if product.quantity_in_stock >= quantity_selected:
-        # Decrease the stock by the quantity the user selected
-        product.quantity_in_stock -= quantity_selected
-        product.save()
-        
-        # Create a Buy record for the transaction
-        buy = Buy.objects.create(user=user, product=product, price=price, quantity=quantity_selected)
-        buy.save()
-        
-        # Optionally, delete the cart item after purchase
-        cart.delete()
-
-        # Redirect to the order creation page (adjust to your actual order creation view)
-        return redirect('order_create')
-    else:
-        # If not enough stock is available, inform the user
-        return redirect('cart_page')  # Redirect to cart view with an error message
+def user_buy(req,cid):
+    user=User.objects.get(username=req.session['user'])
+    cart=Cart.objects.get(pk=cid)
+    product=cart.product
+    price=cart.product.ofr_price
+    buy=Buy.objects.create(user=user,product=product,price=price)
+    buy.save()
+    return redirect(order_create)
 
 
 def user_buy1(req,pid):
@@ -379,6 +362,22 @@ def update_stock(request, product_id):
             return redirect('product_detail', product_id=product.id)
 
     return HttpResponse("Invalid request", status=400)
+
+
+def clear_all_orders2(request):
+    if request.method == "POST":
+        # Ensure the user has admin privileges before clearing orders
+        if request.user.is_staff:  # This check ensures only admins can clear orders
+            # Delete all Buy and Order objects (for all users)
+            Buy.objects.all().delete()  # Deletes all buy records for all users
+            Order.objects.all().delete()  # Deletes all order records for all users
+            
+            messages.success(request, "All orders have been cleared successfully.")
+        else:
+            messages.error(request, "You do not have permission to clear all orders.")
+
+    return redirect(bookings)  # Redirect to admin booking page. Make sure this URL is correct.
+
 
 
 

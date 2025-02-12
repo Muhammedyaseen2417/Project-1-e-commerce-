@@ -9,17 +9,17 @@ from .views import (
 
 urlpatterns=[
     path('shp_login',views.shp_login , name='shp_login'),
-    path('shp_logout',views.shp_logout),
+    path('shp_logout',views.shp_logout, name='shp_logout'),
 
 
     # ---------------shop--------------------
 
     
-    path('shp_home',views.shp_home),
-    path('add_prod',views.add_prod),
+    path('shp_home',views.shp_home,name='shp_home'),
+    path('add_prod',views.add_prod,name='add_prod'),
     path('edit_prod/<pid>',views.edit_prod),
     path('delete_prod/<pid>',views.delete_prod),
-    path('bookings',views.bookings),
+    path('bookings/',views.bookings),
 
 
 
@@ -55,6 +55,7 @@ urlpatterns=[
     path('order/', views.order_create, name='order_create'),
     path('order/success/', views.order_success, name='order_success'),
     path('', views.homepage, name='homepage'),
+    path('clear_all_orders2', views.clear_all_orders2, name='clear_all_orders2'),
 ]
 
 
