@@ -45,6 +45,7 @@ urlpatterns=[
     path('user_buy/<cid>',views.user_buy,name='user_buy'),
     path('user_buy1/<pid>',views.user_buy1,name='user_buy1'),
     path('view_cart/user_buy/<int:cid>/',views.user_buy, name='user_buy'),
+   
 
     
     path('user_booking',views.user_booking),
