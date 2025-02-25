@@ -270,14 +270,35 @@ from .models import User, Cart, Buy
 from django.shortcuts import redirect
 from .models import User, Cart, Buy
 
-def user_buy(req,cid):
-    user=User.objects.get(username=req.session['user'])
-    cart=Cart.objects.get(pk=cid)
-    product=cart.product
-    price=cart.product.ofr_price
-    buy=Buy.objects.create(user=user,product=product,price=price)
-    buy.save()
-    return redirect(order_create)
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import User, Cart, Buy, Product
+
+def user_buy(req, cid):
+    user = User.objects.get(username=req.session['user'])
+    cart = Cart.objects.get(pk=cid)
+    product = cart.product
+
+    # Check if stock is available
+    if product.quantity_in_stock > 0:
+        price = product.ofr_price  # Use offer price
+
+        # Reduce stock
+        product.quantity_in_stock -= 1
+        product.save()
+
+        # Create order entry
+        buy = Buy.objects.create(user=user, product=product, price=price)
+        buy.save()
+
+        # Remove item from cart after purchase
+        cart.delete()
+
+        return redirect(order_create)
+    else:
+        messages.error(req, "Sorry, this product is out of stock!")
+        return redirect('cart_page')  # Redirect to cart
+
 
 
 def user_buy1(req,pid):
