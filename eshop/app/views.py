@@ -200,20 +200,48 @@ class CustomPasswordResetCompleteView(PasswordResetCompleteView):
 
 
 #______________________________________________________________________USER___________________________________________________________________________________________________________________________________________________________________
+
 def register(req):
-    if req.method=='POST':
-        name=req.POST['name']
-        email=req.POST['email']
-        password=req.POST['password']
-        try:
-            data=User.objects.create_user(first_name=name,email=email,password=password,username=email)
-            data.save()
-            return redirect(shp_login)
-        except:
-            messages.warning(req,'User already exists.')
-            return redirect(register)
-    else:
-        return render(req,'user/register.html')
+    if req.method == 'POST':
+        fname = req.POST['fname']
+        email = req.POST['email']
+        password = req.POST['password']
+        if User.objects.filter(email=email).exists():
+            messages.warning(req, "Email already registered")
+            return redirect('register')
+        otp = get_random_string(length=6, allowed_chars='0123456789')
+        req.session['otp'] = otp
+        req.session['email'] = email
+        req.session['fname'] = fname
+        req.session['password'] = password
+        send_mail(
+            'Your OTP Code',
+            f'Your OTP is: {otp}',
+            settings.EMAIL_HOST_USER, [email]
+        )
+        messages.success(req, "OTP sent to your email")
+        return redirect('verify_otp')
+    return render(req, 'user/register.html')
+
+def verify_otp_reg(req):
+    if req.method == 'POST':
+        entered_otp = req.POST['otp'] 
+        stored_otp = req.session.get('otp')
+        email = req.session.get('email')
+        fname = req.session.get('fname')
+        password = req.session.get('password')
+        if entered_otp == stored_otp:
+            user = User.objects.create_user(first_name=fname,email=email,password=password,username=email)
+            user.is_verified = True
+            user.save()      
+            messages.success(req, "Registration successful! You can now log in.")
+            send_mail('User Registration Succesfull', 'Account Created Succesfully And Welcome To Premium Home Cleaners', settings.EMAIL_HOST_USER, [email])
+            return redirect('shp_login')
+        else:
+            messages.warning(req, "Invalid OTP. Try again.")
+            return redirect('verify_otp_reg')
+
+    return render(req, 'user/verify_otp.html')
 
 def user_home(req):
     if 'user' in req.session:
@@ -323,41 +351,7 @@ def user_buy(req,cid):
     buy.save()
     return redirect(order_create)
 
-# def user_buy(request, cid):
-#     try:
-#         user = User.objects.get(username=request.session['user'])
-#         cart_item = get_object_or_404(Cart, id=cid)  # Get the cart item
-#         product = cart_item.product
-#         quantity_to_buy = cart_item.quantity  # Get selected quantity
 
-#         # ✅ Ensure enough stock is available
-#         if product.quantity_in_stock >= quantity_to_buy:
-#             total_price = product.ofr_price * quantity_to_buy  
-
-#             # ✅ Reduce stock by the purchased quantity
-#             product.quantity_in_stock -= quantity_to_buy
-#             product.save()
-
-#             # ✅ Create an order entry for the user
-#             buy = Buy.objects.create(user=user, product=product, price=total_price)
-#             buy.save()
-
-#             # ✅ Remove the item from the cart after purchase
-#             cart_item.delete()
-
-#             messages.success(request, f"You successfully bought {quantity_to_buy} units of {product.name}.")
-#             return redirect('view_cart')  # Redirect back to cart after purchase
-#         else:
-#             messages.error(request, f"Only {product.quantity_in_stock} units left in stock!")
-#             return redirect('view_cart')  # Redirect back if stock is insufficient
-
-#     except Cart.DoesNotExist:
-#         messages.error(request, "Cart item not found.")
-#         return redirect('view_cart')
-
-#     except User.DoesNotExist:
-#         messages.error(request, "User not found. Please log in again.")
-#         return redirect('login_page')
 
 
 
