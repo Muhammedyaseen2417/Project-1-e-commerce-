@@ -58,10 +58,11 @@ urlpatterns=[
     # The URL pattern for removing a booking
     path('remove_booking/<int:booking_id>/', views.remove_booking, name='remove_booking'),
     path('order/', views.order_create, name='order_create'),
-    path('order/success/', views.order_success, name='order_success'),
+    path('order_success/', views.order_success, name='order_success'),
     path('', views.homepage, name='homepage'),
     path('clear_all_orders2', views.clear_all_orders2, name='clear_all_orders2'),
-    path('payment_success/', views.payment_success, name='payment_success'),
+    # path('payment_success/', views.payment_success, name='payment_success'),
+    path('payment-success/', views.payment_success, name='payment_success'),
 ]
 
 
