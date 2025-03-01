@@ -117,10 +117,7 @@
                         <a class="nav-link" href="../user_home">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="view_cart">Cart</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="shp_logout">Log Out</a>
+                        <a class="nav-link" href="{% url 'shp_logout' %}">Logout</a>
                     </li>    
                 </ul>
             </div>
@@ -132,22 +129,21 @@
             <div class="row">
                 {% for i in cart_dtls %}
                 <div class="col-lg-4 col-md-6">
-                    <div class="product-card">
-                        <img src="{{i.product.img.url}}" alt="{{i.product.name}}">
-                        <h2>{{i.product.name}}</h2>
-                        <h3 id="price-{{i.pk}}">₹{{i.product.ofr_price}}</h3>
+                    <div class="product-card" id="product-{{ i.pk }}">
+                        <img src="{{ i.product.img.url }}" alt="{{ i.product.name }}">
+                        <h2>{{ i.product.name }}</h2>
+                        <h3 id="price-{{ i.pk }}">₹{{ i.product.ofr_price }}</h3>
                         <div class="input-group mb-3">
-                            <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity({{i.pk}}, {{i.product.ofr_price}}, {{i.product.quantity_in_stock}})">-</button>
-                            <input type="number" class="form-control text-center" id="quantity-{{i.pk}}" value="1" min="1" onchange="updatePrice({{i.pk}}, {{i.product.ofr_price}}, {{i.product.quantity_in_stock}})">
-                            <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity({{i.pk}}, {{i.product.ofr_price}}, {{i.product.quantity_in_stock}})">+</button>
+                            <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity({{ i.pk }}, {{ i.product.ofr_price }}, {{ i.product.quantity_in_stock }})">-</button>
+                            <input type="number" class="form-control text-center" id="quantity-{{ i.pk }}" value="1" min="1" onchange="updatePrice({{ i.pk }}, {{ i.product.ofr_price }}, {{ i.product.quantity_in_stock }})">
+                            <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity({{ i.pk }}, {{ i.product.ofr_price }}, {{ i.product.quantity_in_stock }})">+</button>
                         </div>
-                        <a href="delete_cart/{{i.pk}}" class="btn btn-dark">Remove</a>
-                        <a href="user_buy/{{i.pk}}" class="btn btn-warning">Buy</a>
+                        <a href="delete_cart/{{ i.pk }}" class="btn btn-dark">Remove</a>
+                        <a href="user_buy/{{ i.pk }}" class="btn btn-warning" onclick="removeFromCart('{{ i.pk }}')">Buy</a>
                     </div>
                 </div>
                 {% endfor %}
             </div>
-            <!-- Total Price and Product Count Messages -->
             <div class="alert alert-success mt-4" role="alert" id="total-price">
                 Total Price: ₹0.00
             </div>
@@ -160,23 +156,20 @@
             </div>
         {% endif %}
     </div>
-    
+
     <script>
         function updatePrice(productId, productPrice, quantityInStock) {
             const quantityInput = document.getElementById(`quantity-${productId}`);
-            let quantity = Math.min(quantityInput.value, quantityInStock); // Limit quantity to stock available
-            quantityInput.value = quantity; // Update the input value to the limited quantity
+            let quantity = Math.min(quantityInput.value, quantityInStock);
+            quantityInput.value = quantity;
             const priceElement = document.getElementById(`price-${productId}`);
             priceElement.textContent = `₹${(quantity * productPrice).toFixed(2)}`;
-            
-            // Update total price and product count
             calculateCartSummary();
         }
         
         function increaseQuantity(productId, productPrice, quantityInStock) {
             const quantityInput = document.getElementById(`quantity-${productId}`);
             let currentQuantity = parseInt(quantityInput.value);
-            
             if (currentQuantity < quantityInStock) {
                 quantityInput.value = currentQuantity + 1;
                 updatePrice(productId, productPrice, quantityInStock);
@@ -188,42 +181,36 @@
         function decreaseQuantity(productId, productPrice, quantityInStock) {
             const quantityInput = document.getElementById(`quantity-${productId}`);
             let currentQuantity = parseInt(quantityInput.value);
-            
             if (currentQuantity > 1) {
                 quantityInput.value = currentQuantity - 1;
                 updatePrice(productId, productPrice, quantityInStock);
             }
         }
-    
+
         function calculateCartSummary() {
             const priceElements = document.querySelectorAll('[id^="price-"]');
             const quantityInputs = document.querySelectorAll('[id^="quantity-"]');
             let totalPrice = 0;
             let totalProducts = 0;
             
-            // Calculate total price and total product count
             quantityInputs.forEach((input, index) => {
                 const quantity = parseInt(input.value);
-                const priceText = priceElements[index].textContent;
-                const price = parseFloat(priceText.replace('₹', ''));
-                
+                const price = parseFloat(priceElements[index].textContent.replace('₹', ''));
                 totalProducts += quantity;
                 totalPrice += price;
             });
 
-            // Update total products
-            const totalProductsElement = document.getElementById('total-products');
-            totalProductsElement.textContent = `Total Products: ${totalProducts}`;
-    
-            // Update total price
-            const totalPriceElement = document.getElementById('total-price');
-            totalPriceElement.textContent = `Total Price: ₹${totalPrice.toFixed(2)}`;
+            document.getElementById('total-products').textContent = `Total Products: ${totalProducts}`;
+            document.getElementById('total-price').textContent = `Total Price: ₹${totalPrice.toFixed(2)}`;
         }
-    
-        // Initial calculation of cart summary
+
+        function removeFromCart(productId) {
+            document.getElementById(`product-${productId}`).remove();
+            calculateCartSummary();
+        }
+
         calculateCartSummary();
     </script>
-    
-    
 </body>
 </html>
+

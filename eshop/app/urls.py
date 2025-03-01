@@ -45,6 +45,10 @@ urlpatterns=[
     path('user_buy/<cid>',views.user_buy,name='user_buy'),
     path('user_buy1/<pid>',views.user_buy1,name='user_buy1'),
     path('view_cart/user_buy/<int:cid>/',views.user_buy, name='user_buy'),
+    path('shp_logout/', views.shp_logout, name='shp_logout'),
+    
+
+
    
 
     
@@ -57,6 +61,7 @@ urlpatterns=[
     path('order/success/', views.order_success, name='order_success'),
     path('', views.homepage, name='homepage'),
     path('clear_all_orders2', views.clear_all_orders2, name='clear_all_orders2'),
+    path('payment_success/', views.payment_success, name='payment_success'),
 ]
 
 

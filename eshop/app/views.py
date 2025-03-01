@@ -270,34 +270,95 @@ from .models import User, Cart, Buy
 from django.shortcuts import redirect
 from .models import User, Cart, Buy
 
+# from django.shortcuts import get_object_or_404, redirect
+# from django.contrib import messages
+# from .models import User, Cart, Buy, Product
+
+# def user_buy(req, cid):
+#     try:
+#         user = User.objects.get(username=req.session['user'])
+#         cart = Cart.objects.get(pk=cid)
+#         product = cart.product
+#         quantity_to_buy = cart.quantity  # Get the quantity from cart
+
+#         # Check if enough stock is available
+#         if product.quantity_in_stock >= quantity_to_buy:
+#             price = product.ofr_price * quantity_to_buy  # Total price calculation
+
+#             # Reduce stock by the purchased quantity
+#             product.quantity_in_stock -= quantity_to_buy
+#             product.save()
+
+#             # Create an order entry for the user
+#             buy = Buy.objects.create(user=user, product=product, price=price)
+#             buy.save()
+
+#             # Remove the item from the cart after purchase
+#             cart.delete()
+
+#             messages.success(req, f"You successfully bought {quantity_to_buy} units of {product.name}.")
+#             return redirect(order_create)
+#         else:
+#             messages.error(req, f"Sorry, only {product.quantity_in_stock} units left in stock!")
+#             return redirect('cart_page')  # Redirect back to cart if stock is insufficient
+
+#     except Cart.DoesNotExist:
+#         messages.error(req, "Cart item not found.")
+#         return redirect('cart_page')
+
+#     except User.DoesNotExist:
+#         messages.error(req, "User not found. Please log in again.")
+#         return redirect('login_page')
+
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from .models import User, Cart, Buy, Product
 
-def user_buy(req, cid):
-    user = User.objects.get(username=req.session['user'])
-    cart = Cart.objects.get(pk=cid)
-    product = cart.product
+def user_buy(req,cid):
+    user=User.objects.get(username=req.session['user'])
+    cart=Cart.objects.get(pk=cid)
+    product=cart.product
+    price=cart.product.ofr_price
+    buy=Buy.objects.create(user=user,product=product,price=price)
+    buy.save()
+    return redirect(order_create)
 
-    # Check if stock is available
-    if product.quantity_in_stock > 0:
-        price = product.ofr_price  # Use offer price
+# def user_buy(request, cid):
+#     try:
+#         user = User.objects.get(username=request.session['user'])
+#         cart_item = get_object_or_404(Cart, id=cid)  # Get the cart item
+#         product = cart_item.product
+#         quantity_to_buy = cart_item.quantity  # Get selected quantity
 
-        # Reduce stock
-        product.quantity_in_stock -= 1
-        product.save()
+#         # ✅ Ensure enough stock is available
+#         if product.quantity_in_stock >= quantity_to_buy:
+#             total_price = product.ofr_price * quantity_to_buy  
 
-        # Create order entry
-        buy = Buy.objects.create(user=user, product=product, price=price)
-        buy.save()
+#             # ✅ Reduce stock by the purchased quantity
+#             product.quantity_in_stock -= quantity_to_buy
+#             product.save()
 
-        # Remove item from cart after purchase
-        cart.delete()
+#             # ✅ Create an order entry for the user
+#             buy = Buy.objects.create(user=user, product=product, price=total_price)
+#             buy.save()
 
-        return redirect(order_create)
-    else:
-        messages.error(req, "Sorry, this product is out of stock!")
-        return redirect('cart_page')  # Redirect to cart
+#             # ✅ Remove the item from the cart after purchase
+#             cart_item.delete()
+
+#             messages.success(request, f"You successfully bought {quantity_to_buy} units of {product.name}.")
+#             return redirect('view_cart')  # Redirect back to cart after purchase
+#         else:
+#             messages.error(request, f"Only {product.quantity_in_stock} units left in stock!")
+#             return redirect('view_cart')  # Redirect back if stock is insufficient
+
+#     except Cart.DoesNotExist:
+#         messages.error(request, "Cart item not found.")
+#         return redirect('view_cart')
+
+#     except User.DoesNotExist:
+#         messages.error(request, "User not found. Please log in again.")
+#         return redirect('login_page')
+
 
 
 
@@ -346,17 +407,50 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .form import OrderForm
 from .models import Order
+import razorpay
+
+
+from django.conf import settings
+from django.shortcuts import render, redirect
+from .models import Order
+from .form import OrderForm
+
 
 def order_create(request):
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('order_success')  # Redirect to success page
+            order = form.save(commit=False)  # Save order details but don't commit yet
+            amount = 50000  # Amount in paise (₹5780)
+
+            # ✅ Initialize Razorpay Client
+            client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+            # ✅ Create Razorpay Order
+            payment_data = {
+                "amount": amount,
+                "currency": "INR",
+                "payment_capture": "1"
+            }
+            payment = client.order.create(data=payment_data)
+
+            # ✅ Save Payment ID in Order
+            order.payment_id = payment['id']
+            order.save()
+
+
+
+            return render(request, 'user/payment.html', {
+                'order': order,
+                'payment': payment,
+                'razorpay_key': settings.RAZORPAY_KEY_ID
+            })
+
     else:
         form = OrderForm()
-    
+
     return render(request, 'user/order.html', {'form': form})
+
 
 def order_success(request):
     return render(request, 'user/order_success.html')
@@ -409,3 +503,13 @@ def clear_all_orders2(request):
 
 
 
+from django.shortcuts import render
+from .models import Order
+
+def payment_success(request):
+    order_id = request.GET.get('order_id')
+    order = Order.objects.get(id=order_id)
+    order.payment_status = 'Paid'  # ✅ Mark order as paid
+    order.save()
+
+    return render(request, 'user/success.html', {'order': order})

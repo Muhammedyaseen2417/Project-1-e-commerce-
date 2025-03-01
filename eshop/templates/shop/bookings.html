@@ -101,7 +101,7 @@
                         <td>{{ order.email }}</td>
                         <td>{{ order.phone_number }}</td>
                         <td>{{ order.shipping_address }}</td>
-                        <td>{{ buy.product.quantity }}</td>
+                        <td>{{ buy.product.quantity_in_stock }}</td>
                         <td>
                             <select class="form-select status-select"
                                 onchange="updateStatus(this, {{ order.id }})">

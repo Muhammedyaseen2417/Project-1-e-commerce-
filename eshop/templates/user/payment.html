@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment | Faz Mobiles</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .payment-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .product-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff416c;
+        }
+
+        .pay-btn {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 30px;
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            box-shadow: 0px 4px 15px rgba(255, 65, 108, 0.4);
+        }
+
+        .pay-btn:hover {
+            background: linear-gradient(135deg, #ff4b2b, #ff416c);
+            transform: scale(1.05);
+            box-shadow: 0px 6px 20px rgba(255, 65, 108, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .payment-container {
+                width: 90%;
+                padding: 20px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <h2>Complete Your Secure Payment</h2>
+
+       
+
+        <button id="pay-btn" class="pay-btn">💳 Pay ₹{{ order.amount }}</button>
+    </div>
+
+    <script>
+        var options = {
+            "key": "{{ razorpay_key }}", 
+            "amount": "{{ payment.amount }}",
+            "currency": "INR",
+            "name": "Faz Mobiles",
+            "description": "Order Payment",
+            "order_id": "{{ payment.id }}",
+            "notes": {
+                "product_name": "{{ order.product.name }}",
+                "quantity": "{{ order.quantity }}",
+                "price_per_unit": "{{ order.product.ofr_price }}",
+                "total_price": "{{ order.amount }}"
+            },
+            "handler": function (response) {
+                window.location.href = "/payment_success/?order_id={{ order.id }}";
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        document.getElementById('pay-btn').onclick = function(e){
+            rzp1.open();
+            e.preventDefault();
+        }
+    </script>
+</body>
+</html>
